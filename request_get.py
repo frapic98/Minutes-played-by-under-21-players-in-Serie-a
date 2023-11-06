@@ -76,7 +76,11 @@ def get_data_transfermarkt(url_base,headers,last_page):
                 team.append(player[7].text)
             else:
                 team.append(player[7].img['alt'])
-            nation.append(player[5].img['alt'])
+            img_tags = player[5].find_all("img")
+            if len(img_tags) >= 2:
+                nation.append(f"{img_tags[0]['alt']}/{img_tags[1]['alt']}")
+            else:
+                nation.append(player[5].img['alt'])
             presenze.append(player[8].text)
             cambio.append(player[9].text)
             mins.append(int(player[11].text.replace(".","")))
