@@ -136,4 +136,44 @@ def get_transfermarkt():
         data_players.to_excel(fr"C:\Users\franc\Documents\Progetto_Calciatori_Under21\transfermarkt\SerieA{season}-Under21.xlsx",index=False)
 
 
+def get_uefa_ranking():
+    base_url="https://kassiesa.net/uefa/data/"
+    mylist=["method1/crank1998.html","method2/crank2003.html","method3/crank2008.html","method4/crank2013.html","method5/crank2018.html","method5/crank2023.html"]
+    df=pd.DataFrame(columns=['stagione','valore'])
+    i=0
+    for objec in mylist:
+        full_url = f'{base_url}{objec}'
+        data_players=pd.read_html(requests.get(full_url).text.replace('<!--','').replace('-->','')
+                ,attrs={'class':'t1'},thousands='.')[0]
+        data_players=data_players[data_players['country']=='Italy']
+        
+        #drop the first and second column
+        data_players=data_players.drop(["#","Unnamed: 1","country","ranking","teams"],axis=1)
+        new_df = data_players.T.reset_index()
+        new_df.columns = ['stagione', 'valore']
+        df=pd.concat([df,new_df]).reset_index(drop=True)
 
+    current_year = 1973
+    years_to_subtract = 1998
+    dataframe=pd.DataFrame(columns=['stagione','valore'])
+    for i in range(current_year,years_to_subtract,5): 
+        full_url = f'{base_url}method1/crank{i}.html'
+        data_players=pd.read_html(requests.get(full_url).text.replace('<!--','').replace('-->','')
+                ,attrs={'class':'t1'},thousands='.')[0]
+        data_players=data_players[data_players['country']=='Italy']
+        data_players=data_players.drop(["#","Unnamed: 1","country","ranking","teams"],axis=1)
+        new_df = data_players.T.reset_index()
+        new_df.columns = ['stagione', 'valore']
+        dataframe=pd.concat([dataframe,new_df]).reset_index(drop=True)
+
+    uefa_ranking=pd.concat([dataframe,df]).reset_index(drop=True)
+    uefa_ranking['stagione'][0:32]=uefa_ranking['stagione'][0:32].astype(str).str[:2].astype(int)+1900
+    uefa_ranking['stagione'][32:]=uefa_ranking['stagione'][32:].astype(str).str[:2].astype(int)+2000
+    #drop the first row
+    uefa_ranking=uefa_ranking.iloc[1:]
+    uefa_ranking.set_index('stagione',inplace=True)
+    uefa_ranking.index.name = None
+    #rename valore column in Uefa_Ranking and convert it in int
+    uefa_ranking.rename(columns={'valore':'Uefa_Ranking'},inplace=True)
+    uefa_ranking['Uefa_Ranking']=uefa_ranking['Uefa_Ranking'].astype(int)
+    return uefa_ranking
