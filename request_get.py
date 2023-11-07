@@ -121,10 +121,10 @@ def get_data_transfermarkt(url_base,headers,last_page):
 
 def get_transfermarkt():
     """Function to get data of under 21 player of Serie a from Transfermarkt"""
-    current_year = 1987
+    current_year = 2022
 
     # Define the number of years you want to subtract
-    years_to_subtract = 19
+    years_to_subtract = 54
     headers = {'User-Agent': 
                 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
     for i in range(years_to_subtract):
@@ -148,11 +148,12 @@ def get_uefa_ranking():
     for objec in mylist:
         full_url = f'{base_url}{objec}'
         data_players=pd.read_html(requests.get(full_url).text.replace('<!--','').replace('-->','')
-                ,attrs={'class':'t1'},thousands='.')[0]
-        data_players=data_players[data_players['country']=='Italy']
-        
+                ,attrs={'class':'t1'},thousands=',')[0]
+        #data_players=data_players[data_players['country']=='Italy']
+        data_players=data_players[data_players['country']=='Italy'].drop(["#","Unnamed: 1","country","ranking","teams"],axis=1)/data_players[0:20].drop(["#","Unnamed: 1","country","ranking","teams"],axis=1).sum()*100
         #drop the first and second column
-        data_players=data_players.drop(["#","Unnamed: 1","country","ranking","teams"],axis=1)
+        #data_players=data_players.drop(["#","Unnamed: 1","country","ranking","teams"],axis=1)
+        
         new_df = data_players.T.reset_index()
         new_df.columns = ['stagione', 'valore']
         df=pd.concat([df,new_df]).reset_index(drop=True)
@@ -163,9 +164,10 @@ def get_uefa_ranking():
     for i in range(current_year,years_to_subtract,5): 
         full_url = f'{base_url}method1/crank{i}.html'
         data_players=pd.read_html(requests.get(full_url).text.replace('<!--','').replace('-->','')
-                ,attrs={'class':'t1'},thousands='.')[0]
-        data_players=data_players[data_players['country']=='Italy']
-        data_players=data_players.drop(["#","Unnamed: 1","country","ranking","teams"],axis=1)
+                ,attrs={'class':'t1'},thousands=',')[0]
+        #data_players=data_players[data_players['country']=='Italy']
+        #data_players=data_players.drop(["#","Unnamed: 1","country","ranking","teams"],axis=1)
+        data_players=data_players[data_players['country']=='Italy'].drop(["#","Unnamed: 1","country","ranking","teams"],axis=1)/data_players[0:20].drop(["#","Unnamed: 1","country","ranking","teams"],axis=1).sum()*100
         new_df = data_players.T.reset_index()
         new_df.columns = ['stagione', 'valore']
         dataframe=pd.concat([dataframe,new_df]).reset_index(drop=True)
@@ -179,5 +181,5 @@ def get_uefa_ranking():
     uefa_ranking.index.name = None
     #rename valore column in Uefa_Ranking and convert it in int
     uefa_ranking.rename(columns={'valore':'Uefa_Ranking'},inplace=True)
-    uefa_ranking['Uefa_Ranking']=uefa_ranking['Uefa_Ranking'].astype(int)
+    uefa_ranking['Uefa_Ranking']=uefa_ranking['Uefa_Ranking'].astype(float)
     return uefa_ranking
