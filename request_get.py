@@ -119,12 +119,12 @@ def get_data_transfermarkt(url_base,headers,last_page):
     giocatori.drop(columns=["age"],inplace=True)   
     return giocatori
 
-def get_transfermarkt():
+def get_transfermarkt(current_year,years_to_subtract):
     """Function to get data of under 21 player of Serie a from Transfermarkt"""
-    current_year = 2022
+    #current_year = 2022
 
     # Define the number of years you want to subtract
-    years_to_subtract = 54
+    #years_to_subtract = 54
     headers = {'User-Agent': 
                 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
     for i in range(years_to_subtract):
