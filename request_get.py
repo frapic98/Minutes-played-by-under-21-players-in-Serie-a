@@ -45,7 +45,31 @@ def get_fbref():
         data_players.to_excel(f"SerieA{year_url}-Under21.xlsx",index=False)
 
 
-def get_data_transfermarkt(url_base,headers,last_page):
+def get_2_squadre(season,headers,url_name):
+    url = f"https://www.transfermarkt.it{url_name}"
+    r= requests.get(url, headers=headers)
+    r.status_code  
+
+    soups = soup(r.text, 'html.parser')  # r.content 대신 r.text도 가능
+    player_info= soups.find_all('table', class_=['items'])
+    player_info_odd_even= soups.find_all('tr', class_=['odd', 'even'])
+    #player_info
+    squadrta=[]
+    minuti=[]
+    for info in player_info_odd_even:
+        player = info.find_all("td")
+        #print(int(player[8].text.replace('-','0').replace("'","").replace('.','')))
+        if (player[0].text)==season[2:4]+"/"+season[7:]:
+            squadrta.append(player[3].img['alt'])
+            minuti.append(int(player[8].text.replace('-','0').replace("'","").replace('.','')))
+    #stampa i due array creati
+    if minuti[0]>minuti[1]:
+        return(squadrta[0])
+    else:
+        return(squadrta[1])
+
+
+def get_data_transfermarkt(url_base,headers,last_page,season):
     name=[]
     position=[]
     age=[]
@@ -73,7 +97,9 @@ def get_data_transfermarkt(url_base,headers,last_page):
             position.append(player[4].text)
             age.append(player[6].text)
             if player[7].text == "2 Squadre":
-                team.append(player[7].text)
+                #team.append(player[7].text)
+                team.append(get_2_squadre(season,headers,player[7].find("a").get("href")))
+                #player[7].find("a").get("href")
             else:
                 team.append(player[7].img['alt'])
             img_tags = player[5].find_all("img")
@@ -136,7 +162,7 @@ def get_transfermarkt(current_year,years_to_subtract):
         parse = soup(r.text, 'html.parser') 
         pages=parse.find_all("li",class_="tm-pagination__list-item tm-pagination__list-item--icon-last-page")
         last_page=int(pages[0].find("a",class_="tm-pagination__link").get("href")[-1])
-        data_players=get_data_transfermarkt(url,headers,last_page)
+        data_players=get_data_transfermarkt(url,headers,last_page,season)
         data_players.to_excel(fr"C:\Users\franc\Documents\Progetto_Calciatori_Under21\transfermarkt\SerieA{season}-Under21.xlsx",index=False)
 
 
