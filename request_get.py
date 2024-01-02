@@ -209,3 +209,42 @@ def get_uefa_ranking():
     uefa_ranking.rename(columns={'valore':'Uefa_Ranking'},inplace=True)
     uefa_ranking['Uefa_Ranking']=uefa_ranking['Uefa_Ranking'].astype(float)
     return uefa_ranking
+
+def get_table_result():
+    base_url = f"https://www.transfermarkt.it/serie-a/tabelle/wettbewerb/IT1?saison_id="
+    current_year = 2022
+
+    # Define the number of years you want to subtract
+    years_to_subtract = 56
+
+    for i in range(years_to_subtract):
+        # Calculate the year to use in the URL
+        
+        full_url = f'{base_url}{current_year-i}'
+        headers = {'User-Agent': 
+                        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
+        
+
+        r= requests.get(full_url, headers=headers)
+        r.status_code  
+
+        soups = soup(r.text, 'html.parser')  # r.content 대신 r.text도 가능
+        player_info_odd_even= soups.find(id="yw1").find("tbody").find_all("tr")
+
+        squadra=[]
+        posizione=[]
+        for info in player_info_odd_even:
+            player = info.find_all("td")
+            #print(player)
+            squadra.append(player[1].img['alt'])
+            posizione.append(int(player[0].text))
+        
+        giocatori = pd.DataFrame(
+                    {
+                    "Posizione":posizione,
+                    "Squadra":squadra,
+                    }
+                )
+
+        #giocatori.head(20)
+        giocatori.to_excel(fr"C:\Users\franc\Documents\Progetto_Calciatori_Under21\classifica\Classifica_{current_year-i}-{current_year + 1 - i}.xlsx",index=False)
