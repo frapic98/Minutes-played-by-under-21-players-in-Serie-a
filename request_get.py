@@ -5,6 +5,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
+import re
 
 def clean_fbref(df):
     df.columns = df.columns.droplevel(0)
@@ -61,6 +62,7 @@ def get_2_squadre(season,headers,url_name):
         #print(int(player[8].text.replace('-','0').replace("'","").replace('.','')))
         if (player[0].text)==season[2:4]+"/"+season[7:]:
             squadrta.append(player[3].img['alt'])
+            #squadrta.append(re.search(r'\/(.*?)\/', player[3].a['href']).group(1))
             minuti.append(int(player[8].text.replace('-','0').replace("'","").replace('.','')))
     #stampa i due array creati
     if minuti[0]>minuti[1]:
@@ -102,6 +104,7 @@ def get_data_transfermarkt(url_base,headers,last_page,season):
                 #player[7].find("a").get("href")
             else:
                 team.append(player[7].img['alt'])
+                #team.append(re.search(r'\/(.*?)\/', player[7].a['href']).group(1))
             img_tags = player[5].find_all("img")
             if len(img_tags) >= 2:
                 nation.append(f"{img_tags[0]['alt']}/{img_tags[1]['alt']}")
@@ -140,6 +143,7 @@ def get_data_transfermarkt(url_base,headers,last_page,season):
     giocatori["Reti"]=giocatori["Reti"].replace("-","0").astype(int)
     giocatori["Cambio"]=giocatori["Cambio"].replace("-","0").astype(int)
     giocatori["Presenze"]=giocatori["Presenze"].replace("-","0").astype(int)
+    
     #giocatori["Minuti giocati"]=giocatori["Minuti giocati"].replace(".",",").astype(int)
 
     giocatori.drop(columns=["age"],inplace=True)   
@@ -158,12 +162,16 @@ def get_transfermarkt(current_year,years_to_subtract):
         year_url = f"{current_year - i}"
         season=f"{current_year - i}-{current_year + 1 - i}"
         url = f"https://www.transfermarkt.it/serie-a/dauerbrenner/wettbewerb/IT1/plus/1/galerie/0?saison_id={year_url}&pos=&detailpos=&altersklasse=u20"
+        #url=f"https://www.transfermarkt.it/premier-league/dauerbrenner/wettbewerb/GB1/plus/1/galerie/0?saison_id={year_url}&pos=&detailpos=&altersklasse=u20"
+        #url=f"https://www.transfermarkt.it/serie-b/dauerbrenner/wettbewerb/IT2/plus/1/galerie/0?saison_id={year_url}&pos=&detailpos=&altersklasse=u20"
         r= requests.get(url, headers=headers)
         parse = soup(r.text, 'html.parser') 
         pages=parse.find_all("li",class_="tm-pagination__list-item tm-pagination__list-item--icon-last-page")
         last_page=int(pages[0].find("a",class_="tm-pagination__link").get("href")[-1])
         data_players=get_data_transfermarkt(url,headers,last_page,season)
         data_players.to_excel(fr"C:\Users\franc\Documents\Progetto_Calciatori_Under21\transfermarkt\SerieA{season}-Under21.xlsx",index=False)
+        #data_players.to_excel(fr"C:\Users\franc\Documents\Progetto_Calciatori_Under21\SerieB\B{season}-Under21.xlsx",index=False)
+
 
 
 def get_uefa_ranking():
@@ -184,7 +192,7 @@ def get_uefa_ranking():
         new_df.columns = ['stagione', 'valore']
         df=pd.concat([df,new_df]).reset_index(drop=True)
 
-    current_year = 1973
+    current_year = 1968
     years_to_subtract = 1998
     dataframe=pd.DataFrame(columns=['stagione','valore'])
     for i in range(current_year,years_to_subtract,5): 
@@ -199,8 +207,8 @@ def get_uefa_ranking():
         dataframe=pd.concat([dataframe,new_df]).reset_index(drop=True)
 
     uefa_ranking=pd.concat([dataframe,df]).reset_index(drop=True)
-    uefa_ranking['stagione'][0:32]=uefa_ranking['stagione'][0:32].astype(str).str[:2].astype(int)+1900
-    uefa_ranking['stagione'][32:]=uefa_ranking['stagione'][32:].astype(str).str[:2].astype(int)+2000
+    uefa_ranking['stagione'][0:37]=uefa_ranking['stagione'][0:37].astype(str).str[:2].astype(int)+1900
+    uefa_ranking['stagione'][37:]=uefa_ranking['stagione'][37:].astype(str).str[:2].astype(int)+2000
     #drop the first row
     uefa_ranking=uefa_ranking.iloc[1:]
     uefa_ranking.set_index('stagione',inplace=True)
@@ -237,6 +245,7 @@ def get_table_result():
             player = info.find_all("td")
             #print(player)
             squadra.append(player[1].img['alt'])
+            #squadra.append(re.search(r'\/(.*?)\/', player[1].a['href']).group(1))
             posizione.append(int(player[0].text))
         
         giocatori = pd.DataFrame(
