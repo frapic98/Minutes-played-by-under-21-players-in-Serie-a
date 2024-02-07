@@ -1,5 +1,5 @@
 #import adfuller
-from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.stattools import adfuller,kpss
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.stattools import grangercausalitytests
@@ -25,6 +25,27 @@ def adf_test(data_df):
                              index=data_df.columns).T
     adf_res_df = adf_res_df.round(4)
     return adf_res_df
+
+
+def kpss_test(data_df,l):
+    test_stat, p_val = [], []
+    cv_1pct, cv_5pct, cv_10pct = [], [], []
+    data_df=data_df[l:]
+    for c in data_df.columns: 
+        kpss_res = kpss(data_df[c].dropna())
+        test_stat.append(kpss_res[0])
+        p_val.append(kpss_res[1])
+        cv_1pct.append(kpss_res[3]['1%'])
+        cv_5pct.append(kpss_res[3]['5%'])
+        cv_10pct.append(kpss_res[3]['10%'])
+    kpss_res_df = pd.DataFrame({'Test statistic': test_stat, 
+                               'p-value': p_val, 
+                               'Critical value - 1%': cv_1pct,
+                               'Critical value - 5%': cv_5pct,
+                               'Critical value - 10%': cv_10pct}, 
+                             index=data_df.columns).T
+    kpss_res_df = kpss_res_df.round(4)
+    return kpss_res_df
 
 
 def get_all_teams():
