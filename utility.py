@@ -70,12 +70,12 @@ def grangers_causation_matrix(data, variables, test='ssr_chi2test',lag=4, verbos
     return df
 
 def granger_test(dataset,maxlag,s,input):    
-    test_result=grangercausalitytests(dataset[:-1],maxlag=5,verbose=False)
+    test_result=grangercausalitytests(dataset[2:-1],maxlag=5,verbose=False)
     test_result_df=pd.DataFrame(columns=['Lag','Test Statistic','P-value'])
     for i in range(s,maxlag+1):
         test_result_df.loc[i-1]=[i-1,test_result[i][0]['ssr_chi2test'][0],test_result[i][0]['ssr_chi2test'][1]]
-    print("--------------------------------------------------------------------------------------------")
+    print("---------------------------------------------------------------------------------------------------------")
     print(f"Grenger Causality Test Results for: {input} ")
-    print("--------------------------------------------------------------------------------------------")
+    print("---------------------------------------------------------------------------------------------------------")
     print(test_result_df)
     return 
