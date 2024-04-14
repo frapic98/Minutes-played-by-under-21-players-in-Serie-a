@@ -10,7 +10,7 @@ The results of this research aim to provide valuable information for football fa
 
 Data structure:
   * ***classifica***: all the result table for Serie A from 1967-1968 season to 2022-2023
-  * ***transfer***: all the transfer market for Serie A from 1992-1993 season to 2022-2023
+  * ***transfer***: all the transfer market movements for Serie A from 1992-1993 season to 2022-2023
   * ***transfermarket***: minutes played by under-21 player for Serie A from 1967-1968 season to 2022-2023 scrapped by Transfermarket
   * ***data***:
     * **ITACPI**: Consumer Price Index which measures the overall change in consumer prices
@@ -23,6 +23,6 @@ Code structure:
   * ***request_get.py***: functions for scraping data
   * ***utility.py***: functions to speed up statistical tests
   * **1_data_acquisition.ipynb**: notebook to acquire and process data
-  * **2_data_visualization.ipynb**: notebook to acquire and process data
+  * **2_data_visualization.ipynb**: notebook to visualise data
   * **3_changepoint_algo_Rbeast.ipynb**: notebook to apply the Changepoint Algorithm and Mann-Kendall Test
   * **4_granger_causality_ccn**: notebook to apply Granger Causality Test and Cross Correlation Function
