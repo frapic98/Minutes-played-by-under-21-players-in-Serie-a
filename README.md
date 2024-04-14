@@ -18,3 +18,11 @@ Data structure:
     * **Ranking_Italy**: Italy FIFA Ranking calculated from 1993-1994 to 2022-2023
     * **Under21_minutes_played**: total minutes played by under-21 players for each season from 1967-1968 to 2022-2023
     * **Under21_minutes_played_teams**: all teams participating in league championships from 1967-1968 to 2022-2023 with minutes granted to under-21 player
+
+Code structure:
+  * ***request_get.py***: functions for scraping data
+  * ***utility.py***: functions to speed up statistical tests
+  * **1_data_acquisition.ipynb**: notebook to acquire and process data
+  * **2_data_visualization.ipynb**: notebook to acquire and process data
+  * **3_changepoint_algo_Rbeast.ipynb**: notebook to apply the Changepoint Algorithm and Mann-Kendall Test
+  * **4_granger_causality_ccn**: notebook to apply Granger Causality Test and Cross Correlation Function
