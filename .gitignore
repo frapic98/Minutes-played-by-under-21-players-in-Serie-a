@@ -1,28 +1,8 @@
 /fbref
 /paste.txt
-/transfermarkt
 /immagini
-/classifica
 /SerieB
 /Premier_League
-/data
-adjusted_dataset.xlsx
-ITACPI.xls
-mixed_dataset.xlsx
-PL_mins_played.xlsx
-Punti_Nazionale_Under21.xlsx
-trasfer_SerieA.xlsx
-saldo_trasferimenti.xlsx
-Under21_minutes_played_teams.xlsx
-Under21_minutes_played.xlsx
-ToDo
-appunti.docx
-Ranking_Italy.xlsx
 scraping.ipynb
-scraping.py
-scraping.ipynb
-Bayesian changepoint detection 1990 italiani.png
-Bayesian changepoint detection 1990 italiani2.png
-Bayesian changepoint detection.png
-Bayesian changepoint detection2.png
-Discorso Tesi.docx
+ranking_italy.ipynb
+
